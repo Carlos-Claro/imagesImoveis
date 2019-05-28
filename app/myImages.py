@@ -37,10 +37,13 @@ class myImages(object):
         pa = '../../imo/' + tamanho['prefixo'] + nome
         if os.path.exists(pa):
             with Image.open(image) as imagem:
-                if ( tamanho['width'] == 'auto' ):
+                if tamanho['width'] == 'auto' :
                     cover = resizeimage.resize_width(imagem,imagem.size[0])
                 else:
-                    cover = resizeimage.resize_width(imagem,tamanho['width'])
+                    if tamanho['width'] < imagem.size[0] :
+                        cover = resizeimage.resize_width(imagem,imagem.size[0])
+                    else:
+                        cover = resizeimage.resize_width(imagem,tamanho['width'])
                 cover.save('../../imo/' + tamanho['prefixo'] + nome, 'jpeg')
 
     def tamanhos(self):
