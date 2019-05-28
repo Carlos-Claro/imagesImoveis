@@ -35,6 +35,8 @@ class myImages(object):
 
     def geraImages(self,image,nome,tamanho):
         pa = '../../imo/' + tamanho['prefixo'] + nome
+        print(tamanho['width'])
+        print(imagem.width)
         if os.path.exists(pa):
             with Image.open(image) as imagem:
                 if tamanho['width'] == 'auto' :
