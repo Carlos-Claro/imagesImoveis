@@ -21,7 +21,7 @@ class Imoveis(object):
             print(v['arquivo'])
             res = self.images.copyImage(v)
             if res:
-                data = {'arquivo': str(res), 'data':datetime.datetime.now().strftime('%Y-%m-%d %h:%M')}
+                data = {'arquivo': str(res), 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}
                 update = requests.put(self.URL_PUT + str(v['id']),params=data)
                 print(v)
                 print(data)
