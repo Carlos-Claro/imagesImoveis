@@ -24,7 +24,7 @@ class myImages(object):
         if res.status_code == 200 :
             content_type = res.headers['content-type']
             arquivo = '{}_{}.{}'.format(image['id_imovel'],image['id'], self.get_extensao_original(content_type))
-            caminho = '../originais/'
+            caminho = '../../originais/'
             with open(caminho + arquivo, 'wb') as f:
                 f.write(res.content)
             self.executa(caminho + arquivo, arquivo)
@@ -38,7 +38,7 @@ class myImages(object):
                 cover = resizeimage.resize_width(imagem,imagem.size[0])
             else:
                 cover = resizeimage.resize_width(imagem,tamanho['width'])
-            cover.save('../imo/' + tamanho['prefixo'] + nome, 'jpeg')
+            cover.save('../../imo/' + tamanho['prefixo'] + nome, 'jpeg')
 
     def tamanhos(self):
         tamanho = [
