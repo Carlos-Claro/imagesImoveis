@@ -35,10 +35,10 @@ class myImages(object):
 
     def geraImages(self,image,nome,tamanho):
         pa = '../../imo/' + tamanho['prefixo'] + nome
-        print(tamanho['width'])
-        print(imagem.width)
         if os.path.exists(pa):
             with Image.open(image) as imagem:
+                print(tamanho['width'])
+                print(imagem.width)
                 if tamanho['width'] == 'auto' :
                     cover = resizeimage.resize_width(imagem,imagem.size[0])
                 elif tamanho['width'] < imagem.width :
