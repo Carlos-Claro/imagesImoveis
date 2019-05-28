@@ -7,8 +7,8 @@ import datetime
 class Imoveis(object):
     
     def __init__(self):
-        self.URI = 'http://localhost:5000/'
-        #self.URI = 'http://201.16.246.176:5000/'
+        #self.URI = 'http://localhost:5000/'
+        self.URI = 'http://201.16.246.176:5000/'
         self.URL_GET = self.URI + 'imovel_images_copy'
         self.URL_PUT = self.URI + 'imovel_images/'
         self.images = myImages(85344)
@@ -21,7 +21,7 @@ class Imoveis(object):
             print(v['arquivo'])
             res = self.images.copyImage(v)
             if res:
-                data = {'arquivo': str(res), 'data':datetime.datetime.now().strftime('%Y-%m-%d ')}
+                data = {'arquivo': str(res), 'data':datetime.datetime.now().strftime('%Y-%m-%d %h:%M')}
                 update = requests.put(self.URL_PUT + str(v['id']),params=data)
                 print(v)
                 print(data)
