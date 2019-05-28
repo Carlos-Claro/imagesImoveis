@@ -40,7 +40,7 @@ class myImages(object):
                 if tamanho['width'] == 'auto' :
                     cover = resizeimage.resize_width(imagem,imagem.size[0])
                 else:
-                    if tamanho['width'] < imagem.size[0] :
+                    if tamanho['width'] <= imagem.size[0] :
                         cover = resizeimage.resize_width(imagem,imagem.size[0])
                     else:
                         cover = resizeimage.resize_width(imagem,tamanho['width'])
