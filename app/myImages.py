@@ -26,16 +26,22 @@ class myImages(object):
             content_type = res.headers['content-type']
             arquivo = '{}_{}.{}'.format(image['id_imovel'],image['id'], self.get_extensao_original(content_type))
             caminho = '../../originais/'
+            print(caminho + arquivo)
             with open(caminho + arquivo, 'wb') as f:
                 f.write(res.content)
             self.executa(caminho + arquivo, arquivo)
-            return 'F_' + arquivo
+            arquivo_imo = '../../imo/F_' + arquivo
+            if os.path.exists(arquivo_imo):
+                return 'F_' + arquivo
+            else:
+                return False
         else:
+            
             return False
 
     def geraImages(self,image,nome,tamanho):
         pa = '../../imo/' + tamanho['prefixo'] + nome
-        if os.path.exists(pa):
+        if os.path.exists(pa) == False:
             with Image.open(image) as imagem:
                 print(tamanho['width'])
                 print(imagem.width)

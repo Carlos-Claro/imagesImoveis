@@ -15,7 +15,6 @@ class Imoveis(object):
 
     def main(self):
         images = requests.get(self.URL_GET)
-        print(images.status_code)
         i = images.json()
         for v in i:
             print(v['arquivo'])
@@ -23,12 +22,14 @@ class Imoveis(object):
             if res:
                 data = {'arquivo': str(res), 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}
                 update = requests.put(self.URL_PUT + str(v['id']),params=data)
+                print('res sucesso')
                 print(v)
                 print(data)
                 print(self.URL_PUT + str(v['id']))
                 print(update.status_code)
                 print(update.content)
             else:
+                print('res fail')
                 print(v)
                 data = {'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}
                 print(data)
