@@ -14,13 +14,14 @@ class Imoveis(object):
         self.URI = 'http://201.16.246.176:5000/'
         self.URL_GET = self.URI + 'imoveis_images_gerar/100'
         self.URL_PUT = self.URI + 'imovel_images/'
+        self.URL_rodando = '/var/www/html/images/'
         self.images = imagesPortal()
 
     def main(self):
-        if os.path.exists('rodando.txt') :
+        if os.path.exists(self.URL_rodando + 'rodando.txt') :
             print('rodando')
         else:
-            with open('rodando.txt', 'w') as f:
+            with open(self.URL_rodando + 'rodando.txt', 'w') as f:
                 f.write('rodando')
             images = requests.get(self.URL_GET)
             i = images.json()
@@ -43,7 +44,7 @@ class Imoveis(object):
                     update = requests.put(self.URL_PUT + str(v['id']),params=data)
             self.fim = time.time()
             print(self.fim-self.inicio)
-            os.unlink('rodando.txt')
+            os.unlink(self.URL_rodando + 'rodando.txt')
             
         
     
