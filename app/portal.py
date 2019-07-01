@@ -10,8 +10,8 @@ class Imoveis(object):
     
     def __init__(self):
         self.inicio = time.time()
-        self.URI = 'http://localhost:5000/'
-        #self.URI = 'http://201.16.246.176:5000/'
+        #self.URI = 'http://localhost:5000/'
+        self.URI = 'http://201.16.246.176:5000/'
         self.URL_GET = self.URI + 'imoveis_images_gerar/100'
         self.URL_PUT = self.URI + 'imovel_images/'
         self.URL_PUT_IMOVEL = self.URI + 'imovel/'
