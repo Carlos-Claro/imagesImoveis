@@ -23,7 +23,7 @@ class Imoveis(object):
             print('rodando')
             print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
             stat = os.stat(self.URL_rodando + 'rodando.txt')
-            if stat.st_mtime + 600 < time.time():
+            if stat.st_mtime + 360 < time.time():
                 os.unlink(self.URL_rodando + 'rodando.txt')
                 print('maior')
                 print(stat.st_mtime)
