@@ -21,6 +21,7 @@ class Imoveis(object):
     def main(self):
         if os.path.exists(self.URL_rodando + 'rodando.txt') :
             print('rodando')
+            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
         else:
             with open(self.URL_rodando + 'rodando.txt', 'w') as f:
                 f.write('rodando')
