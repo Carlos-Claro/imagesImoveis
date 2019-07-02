@@ -85,7 +85,7 @@ class imagesPortal(object):
     def tamanhos(self):
         tamanho = [
                     {'width':300,       'height':'auto', 'prefixo':'destaque_'},
-                    {'width':650,       'height':'auto', 'prefixo':'vitrine_'},
+                    {'width':600,       'height':'auto', 'prefixo':'vitrine_'},
                     {'width':'auto',    'height':'auto', 'prefixo':'ampliado_'},
                 ]
         return tamanho
