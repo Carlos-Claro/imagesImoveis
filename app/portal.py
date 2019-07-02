@@ -22,6 +22,14 @@ class Imoveis(object):
         if os.path.exists(self.URL_rodando + 'rodando.txt') :
             print('rodando')
             print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
+            stat = os.stat(self.URL_rodando + 'rodando.txt')
+            if stat.st_mtime + 600 < time.time():
+                os.unlink(self.URL_rodando + 'rodando.txt')
+                print('maior')
+                print(stat.st_mtime)
+                print(time.time())
+            else:
+                print('menor')
         else:
             with open(self.URL_rodando + 'rodando.txt', 'w') as f:
                 f.write('rodando')
