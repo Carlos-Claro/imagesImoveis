@@ -24,6 +24,7 @@ class Imoveis(object):
         else:
             with open(self.URL_rodando + 'rodando.txt', 'w') as f:
                 f.write('rodando')
+                f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
             images = requests.get(self.URL_GET)
             i = images.json()
             for v in i:
