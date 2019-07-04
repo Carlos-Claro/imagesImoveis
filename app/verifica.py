@@ -6,6 +6,9 @@ import datetime
 import time
 import os
 import sys
+import json
+from shutil import copyfile
+
 
 class Verifica(object):
     
@@ -19,7 +22,7 @@ class Verifica(object):
         self.inicio = time.time()
         self.images = imagesPortal()
         self.cwd = '/var/www/html/images/portais/'
-        self.arquivoVerificador = 'relatorios/verificador.json'
+        self.arquivoVerificador = self.cwd + 'verificador.json'
         self.verificaArquivo()
         
         
@@ -44,7 +47,7 @@ class Verifica(object):
                 lista_retorno = {}
                 for arquivo in lista_arquivos:
                     if os.path.isfile(pasta + arquivo):
-                        if 'destaque_' is arquivo[0]:
+                        if 'destaque_' in arquivo:
                             a = arquivo.split('_')
                             lista_retorno[a[1]] = arquivo
                 return lista_retorno
@@ -53,25 +56,19 @@ class Verifica(object):
         else:
             return False
     
-    def rodando(self):
-        if os.path.exists(self.URL_rodando + 'rodando.txt') :
-            print('rodando')
-            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
-            stat = os.stat(self.URL_rodando + 'rodando.txt')
-            if stat.st_mtime + 360 < time.time():
-                self.deleta_rodando()
-                print('maior, tente novamente')
-                print(stat.st_mtime)
-                print(time.time())
-                return False
+    def listaArquivosTemp(self, pasta):
+        if os.path.isdir(pasta):
+            lista_arquivos = os.listdir(pasta)
+            if len(lista_arquivos):
+                lista_retorno = []
+                for arquivo in lista_arquivos:
+                    if os.path.isfile(pasta + arquivo):
+                        lista_retorno.append(arquivo)
+                return lista_retorno
             else:
-                print('menor, aguarde...')
                 return False
         else:
-            with open(self.URL_rodando + 'rodando.txt', 'w') as f:
-                f.write('rodando - ')
-                f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
-                return True
+            return False
     
     def lista_pastas(self):
         return True
@@ -82,19 +79,45 @@ class Verifica(object):
             os.unlink(self.URL_rodando + 'rodando.txt')
         
     
+    def renomeia(self):
+        if len(self.pastas) > 0 :
+            for pasta in self.pastas:
+                print(pasta)
+                pasta_completa = self.cwd + pasta + '/'
+                lista = self.listaArquivosTemp(pasta_completa)
+                if lista:
+                    for arquivo in lista:
+                        copyfile(pasta_completa + arquivo, pasta_completa + 'destaque_' + arquivo)
+                        copyfile(pasta_completa + arquivo, pasta_completa + 'vitrine_' + arquivo)
+                        copyfile(pasta_completa + arquivo, pasta_completa + 'ampliado_' + arquivo)
+                        os.remove(pasta_completa + arquivo)
+                        print(pasta_completa + arquivo)
+                        print(pasta_completa + 'destaque_' + arquivo)
+        return True
+    
     def main(self):
         if len(self.pastas) > 0 :
             for pasta in self.pastas:
                 print(pasta)
-                pasta_completa = self.cwd + pasta 
+                pasta_completa = self.cwd + pasta + '/'
                 lista = self.listaArquivos(pasta_completa)
+                print(lista)
                 if lista:
-                    for arquivo in lista:
-                        existe = self.verificaImovelexiste(arquivo)
-                        if not existe:
-                            self.deletarArquivos(pasta_completa,arquivo)
-                            print(arquivo + ' nao existe')
-                self.atualizarArquivo(pasta)
+                    for id_imovel, arquivo in lista.items():
+                        i = self.images.verificaPastaImovel(pasta,id_imovel)
+                        if i:
+                            vitrine = arquivo.replace('destaque','vitrine')
+                            if os.path.isfile(pasta_completa + vitrine):
+                                os.remove(pasta_completa + vitrine)
+                            ampliado = arquivo.replace('destaque','ampliado')
+                            if os.path.isfile(pasta_completa + ampliado):
+                                copyfile(pasta_completa + ampliado, pasta_completa + id_imovel + '/' + vitrine)
+                                os.remove(pasta_completa + ampliado)
+                            copyfile(pasta_completa + arquivo, pasta_completa + id_imovel + '/' + arquivo)
+                            os.remove(pasta_completa + arquivo)
+                            print(pasta_completa + arquivo)
+                        else:
+                            print(pasta,i)    
         return True
     
 if __name__ == '__main__':
