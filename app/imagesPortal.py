@@ -4,6 +4,7 @@ from resizeimage import resizeimage
 import requests
 import os.path
 import time
+import datetime
 
 # https://github.com/charlesthk/python-resize-image
 class imagesPortal(object):
@@ -32,44 +33,55 @@ class imagesPortal(object):
             os.mkdir(self.pasta_cwd + id_empresa)
             return self.verificaPasta(id_empresa)
     
-    def setArquivo(self,image):
+    def verificaPastaImovel(self,id_empresa,id_imovel):
+        if os.path.isdir(self.pasta_cwd + id_empresa + '/' + id_imovel):
+            return True
+        else:
+            os.mkdir(self.pasta_cwd + id_empresa + '/' + id_imovel)
+            return self.verificaPastaImovel(id_empresa, id_imovel)
+    
+    def setArquivo(self,image,imovel):
         if 'http' in image['arquivo'] :
             return image['arquivo']
         else:
-            return 'http://pow.com.br/powsites/' + str(image['id_empresa']) + '/imo/650F_' + image['arquivo']
+            return 'http://pow.com.br/powsites/' + str(imovel['id_empresa']) + '/imo/650F_' + image['arquivo']
         
     
-    def copyImage(self,image):
+    def copyImage(self,imovel):
         inicio = time.time()
-        a = self.setArquivo(image)
-        res = requests.get(a, stream=True)
-        content_type = res.headers['content-type']
-        if res.status_code == 200 and not 'html' in content_type:
-            id_empresa = str(image['id_empresa'])
-            self.verificaPasta(id_empresa)
-            extensao = self.get_extensao_original(content_type)
-            nome_arquivo = '{}_{}.{}'.format(image['id_imovel'],image['id'], extensao)
-            caminho = self.pasta_cwd + id_empresa + '/'
-            with open(caminho + 'originais/' + nome_arquivo, 'wb') as f:
-                f.write(res.content)
-            self.executa(caminho + 'originais/' + nome_arquivo, nome_arquivo, caminho)
-            arquivo_destaque = caminho + 'destaque_' + nome_arquivo
-            os.unlink(caminho + 'originais/' + nome_arquivo)
-            if os.path.exists(arquivo_destaque):
-                fim = time.time()
-                print(fim-inicio)
-                return extensao
+        self.verificaPasta(imovel['id_empresa'])
+        retorno = []
+        for image in imovel['images']:
+            self.verificaPastaImovel(imovel['id_empresa'], imovel['id'])
+            a = self.setArquivo(image, imovel)
+            res = requests.get(a, stream=True)
+            content_type = res.headers['content-type']
+            if res.status_code == 200 and not 'html' in content_type:
+                extensao = self.get_extensao_original(content_type)
+                nome_arquivo = '{}_{}.{}'.format(imovel['id'],image['id'], extensao)
+                caminho = self.pasta_cwd + str(imovel['id_empresa']) + '/'
+                caminho_id = self.pasta_cwd + str(imovel['id_empresa']) + '/' + str(imovel['_id']) + '/'
+                with open(caminho + 'originais/' + nome_arquivo, 'wb') as f:
+                    f.write(res.content)
+                self.executa(caminho + 'originais/' + nome_arquivo, nome_arquivo, caminho_id)
+                arquivo_destaque = caminho_id + 'destaque_' + nome_arquivo
+                os.unlink(caminho + 'originais/' + nome_arquivo)
+                if os.path.exists(arquivo_destaque):
+                    fim = time.time()
+                    print(fim-inicio)
+                    retorno.append({'id': image['id'], 'extensao':extensao, 'gerado_image':1,'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
+                else:
+                    fim = time.time()
+                    print(fim-inicio)
+                    retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
             else:
                 fim = time.time()
                 print(fim-inicio)
-                return False
-        else:
-            fim = time.time()
-            print(fim-inicio)
-            return False
-
+                retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
+        return retorno    
+        
     def geraImages(self,image,nome,tamanho, caminho):
-        pa = caminho + tamanho['prefixo'] + nome
+        pa = caminho +  tamanho['prefixo'] + nome
         if os.path.exists(pa) == False:
             with Image.open(image) as imagem:
                 print(tamanho['width'])
@@ -85,8 +97,8 @@ class imagesPortal(object):
     def tamanhos(self):
         tamanho = [
                     {'width':300,       'height':'auto', 'prefixo':'destaque_'},
-                    {'width':600,       'height':'auto', 'prefixo':'vitrine_'},
-                    {'width':'auto',    'height':'auto', 'prefixo':'ampliado_'},
+                    {'width':'auto',       'height':'auto', 'prefixo':'vitrine_'},
+                    #{'width':'auto',    'height':'auto', 'prefixo':'ampliado_'},
                 ]
         return tamanho
 

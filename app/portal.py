@@ -5,62 +5,89 @@ from imagesPortal import imagesPortal
 import datetime
 import time
 import os
+import sys
 
 class Imoveis(object):
     
     def __init__(self):
+        if 'localhost' in sys.argv:
+            self.localhost = True
+            self.URI = 'http://localhost:5000/'
+        else:
+            self.localhost = False
+            self.URI = 'http://201.16.246.176:5000/'
         self.inicio = time.time()
-        #self.URI = 'http://localhost:5000/'
-        self.URI = 'http://201.16.246.176:5000/'
-        self.URL_GET = self.URI + 'imoveis_images_gerar/100'
-        self.URL_PUT = self.URI + 'imovel_images/'
+        self.URL_GET = self.URI + 'imoveis_images_gerar/10'
+        self.URL_PUT = self.URI + 'imovel_images_imovel/'
         self.URL_PUT_IMOVEL = self.URI + 'imovel/'
+        self.URL_PUT_MONGO = self.URI + 'imoveismongo/'
         self.URL_rodando = '/var/www/html/images/'
         self.images = imagesPortal()
-
-    def main(self):
-        if os.path.exists(self.URL_rodando + 'rodando.txt') :
-            print('rodando')
-            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
-            stat = os.stat(self.URL_rodando + 'rodando.txt')
-            if stat.st_mtime + 360 < time.time():
-                os.unlink(self.URL_rodando + 'rodando.txt')
-                print('maior')
-                print(stat.st_mtime)
-                print(time.time())
-            else:
-                print('menor')
+        
+    def rodando(self):
+        if ( self.localhost ):
+            return True
         else:
-            with open(self.URL_rodando + 'rodando.txt', 'w') as f:
-                f.write('rodando')
-                f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
-            images = requests.get(self.URL_GET)
-            i = images.json()
-            for v in i:
-                print('id - ' + str(v['id']) + ' - ' + v['arquivo'])
-                res = self.images.copyImage(v)
-                if res:
-                    data = {'extensao': str(res), 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), 'gerado_image' : 1}
-                    update = requests.put(self.URL_PUT + str(v['id']),params=data)
-                    data_imovel = {'integra_mongo_db':"0000-00-00"}
-                    update_imovel = requests.put(self.URL_PUT_IMOVEL + str(v['id_imovel']),params=data_imovel)
-                    print('res sucesso')
-                    print(data)
-                    print(self.URL_PUT + str(v['id']))
-                    print(self.URL_PUT_IMOVEL + str(v['id_imovel']))
-                    print(update.status_code)
-                    print(update.content)
-                    print(update_imovel.status_code)
-                    print(update_imovel.content)
+            if os.path.exists(self.URL_rodando + 'rodando.txt') :
+                print('rodando')
+                print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
+                stat = os.stat(self.URL_rodando + 'rodando.txt')
+                if stat.st_mtime + 360 < time.time():
+                    self.deleta_rodando()
+                    print('maior, tente novamente')
+                    print(stat.st_mtime)
+                    print(time.time())
+                    return False
                 else:
-                    print('res fail')
-                    print(v)
-                    data = {'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),'gerado_image':2}
-                    print(data)
-                    update = requests.put(self.URL_PUT + str(v['id']),params=data)
+                    print('menor, aguarde...')
+                    return False
+            else:
+                with open(self.URL_rodando + 'rodando.txt', 'w') as f:
+                    f.write('rodando - ')
+                    f.write(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
+                    return True
+    
+    def deleta_rodando(self):
+        if not self.localhost:
+            os.unlink(self.URL_rodando + 'rodando.txt')
+        
+    
+    def main(self):
+        if self.rodando():
+            imoveis = requests.get(self.URL_GET)
+            i = imoveis.json()
+            for v in i['itens']:
+                print('imovel - ' + str(v['_id']) + ' empresa - ' + v['id_empresa'])
+                if 'images' in v:
+                    res = self.images.copyImage(v)
+                    print(res)
+                    if res:
+                        for r in res:
+                            update = requests.put(self.URL_PUT,params=r)
+                            print(update.status_code)
+                        data_imovel = {'integra_mongo_db':"0000-00-00"}
+                        update_imovel = requests.put(self.URL_PUT_IMOVEL + str(v['_id']),params=data_imovel)
+                        data_mongo = {'tem_foto':1,'data_update':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}
+                        update_mongo = requests.put(self.URL_PUT_MONGO + str(v['_id']),params=data_mongo)
+                        print('res sucesso')
+                        print(r)
+                        print(self.URL_PUT + str(v['id']))
+                        print(self.URL_PUT_IMOVEL + str(v['id']))
+                        print(update.content)
+                        print('imovel')
+                        print(update_imovel.status_code)
+                        print(update_imovel.content)
+                        print('mongo')
+                        print(update_mongo.status_code)
+                        print(update_mongo.content)
+                    else:
+                        data_mongo = {'tem_foto':1,'data_update':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}
+                        update_mongo = requests.put(self.URL_PUT_MONGO + str(v['_id']),params=data_mongo)
+                        print('res fail')
+                        print(v['_id'])
             self.fim = time.time()
             print(self.fim-self.inicio)
-            os.unlink(self.URL_rodando + 'rodando.txt')
+            self.deleta_rodando()
             
         
     
