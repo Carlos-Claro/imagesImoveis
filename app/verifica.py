@@ -48,8 +48,9 @@ class Verifica(object):
                 for arquivo in lista_arquivos:
                     if os.path.isfile(pasta + arquivo):
                         if 'destaque_' in arquivo:
-                            a = arquivo.split('_')
-                            lista_retorno[a[1]] = arquivo
+                            b = arquivo.split('.')
+                            a = b[0].split('_')
+                            lista_retorno[a[1] + '-' + a[2]] = arquivo
                 return lista_retorno
             else:
                 return False
@@ -87,9 +88,9 @@ class Verifica(object):
                 lista = self.listaArquivosTemp(pasta_completa)
                 if lista:
                     for arquivo in lista:
-                        copyfile(pasta_completa + arquivo, pasta_completa + 'destaque_' + arquivo)
-                        copyfile(pasta_completa + arquivo, pasta_completa + 'vitrine_' + arquivo)
-                        copyfile(pasta_completa + arquivo, pasta_completa + 'ampliado_' + arquivo)
+                        copyfile(pasta_completa + arquivo, pasta_completa + arquivo)
+                        copyfile(pasta_completa + arquivo, pasta_completa + arquivo.replace('destaque_','vitrine_'))
+                        copyfile(pasta_completa + arquivo, pasta_completa + arquivo.replace('destaque_','ampliado_'))
                         os.remove(pasta_completa + arquivo)
                         print(pasta_completa + arquivo)
                         print(pasta_completa + 'destaque_' + arquivo)
@@ -99,23 +100,25 @@ class Verifica(object):
         if len(self.pastas) > 0 :
             for pasta in self.pastas:
                 print(pasta)
-                pasta_completa = self.cwd + pasta + '/'
+                pasta_completa = self.cwd + str(pasta) + '/'
                 lista = self.listaArquivos(pasta_completa)
                 print(lista)
                 if lista:
                     for id_imovel, arquivo in lista.items():
-                        i = self.images.verificaPastaImovel(pasta,id_imovel)
+                        a = id_imovel.split('-')
+                        imovel = a[0]
+                        i = self.images.verificaPastaImovel(str(pasta),str(imovel))
                         if i:
+                            destaque = arquivo
                             vitrine = arquivo.replace('destaque','vitrine')
-                            if os.path.isfile(pasta_completa + vitrine):
-                                os.remove(pasta_completa + vitrine)
                             ampliado = arquivo.replace('destaque','ampliado')
+                            if os.path.isfile(pasta_completa + vitrine):
+                                os.unlink(pasta_completa + vitrine)
                             if os.path.isfile(pasta_completa + ampliado):
-                                copyfile(pasta_completa + ampliado, pasta_completa + id_imovel + '/' + vitrine)
-                                os.remove(pasta_completa + ampliado)
-                            copyfile(pasta_completa + arquivo, pasta_completa + id_imovel + '/' + arquivo)
-                            os.remove(pasta_completa + arquivo)
-                            print(pasta_completa + arquivo)
+                                copyfile(pasta_completa + ampliado, pasta_completa + str(imovel) + '/' + vitrine)
+                                os.unlink(pasta_completa + ampliado)
+                            copyfile(pasta_completa + arquivo, pasta_completa + str(imovel) + '/' + arquivo)
+                            os.unlink(pasta_completa + arquivo)
                         else:
                             print(pasta,i)    
         return True
