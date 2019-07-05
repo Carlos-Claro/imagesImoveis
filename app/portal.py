@@ -17,7 +17,7 @@ class Imoveis(object):
             self.localhost = False
             self.URI = 'http://201.16.246.176:5000/'
         self.inicio = time.time()
-        self.URL_GET = self.URI + 'imoveis_images_gerar/10'
+        self.URL_GET = self.URI + 'imoveis_images_gerar/100'
         self.URL_PUT = self.URI + 'imovel_images_imovel/'
         self.URL_PUT_IMOVEL = self.URI + 'imovel/'
         self.URL_PUT_MONGO = self.URI + 'imoveismongo/'
