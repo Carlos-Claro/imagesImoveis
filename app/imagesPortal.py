@@ -55,8 +55,9 @@ class imagesPortal(object):
             self.verificaPastaImovel(imovel['id_empresa'], imovel['id'])
             a = self.setArquivo(image, imovel)
             res = requests.get(a, stream=True)
-            content_type = res.headers['content-type']
             if res.status_code == 200 and not 'html' in content_type:
+                content_type = res.headers['content-type']
+                print(content_type)
                 extensao = self.get_extensao_original(content_type)
                 nome_arquivo = '{}_{}.{}'.format(imovel['id'],image['id'], extensao)
                 caminho = self.pasta_cwd + str(imovel['id_empresa']) + '/'
@@ -97,7 +98,7 @@ class imagesPortal(object):
     def tamanhos(self):
         tamanho = [
                     {'width':300,       'height':'auto', 'prefixo':'destaque_'},
-                    {'width':'auto',       'height':'auto', 'prefixo':'vitrine_'},
+                    {'width':'auto',    'height':'auto', 'prefixo':'vitrine_'},
                     #{'width':'auto',    'height':'auto', 'prefixo':'ampliado_'},
                 ]
         return tamanho
