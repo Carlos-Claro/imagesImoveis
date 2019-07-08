@@ -56,7 +56,10 @@ class imagesPortal(object):
             a = self.setArquivo(image, imovel)
             res = requests.get(a, stream=True)
             if res.status_code == 200:
-                content_type = res.headers['content-type']
+                if 'content-type' in res.headers:
+                    content_type = res.headers['content-type']
+                else:
+                    content_type = 'html'
                 if not 'html' in content_type:
                     print(content_type)
                     extensao = self.get_extensao_original(content_type)
