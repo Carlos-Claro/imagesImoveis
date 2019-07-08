@@ -55,22 +55,27 @@ class imagesPortal(object):
             self.verificaPastaImovel(imovel['id_empresa'], imovel['id'])
             a = self.setArquivo(image, imovel)
             res = requests.get(a, stream=True)
-            if res.status_code == 200 and not 'html' in content_type:
+            if res.status_code == 200:
                 content_type = res.headers['content-type']
-                print(content_type)
-                extensao = self.get_extensao_original(content_type)
-                nome_arquivo = '{}_{}.{}'.format(imovel['id'],image['id'], extensao)
-                caminho = self.pasta_cwd + str(imovel['id_empresa']) + '/'
-                caminho_id = self.pasta_cwd + str(imovel['id_empresa']) + '/' + str(imovel['_id']) + '/'
-                with open(caminho + 'originais/' + nome_arquivo, 'wb') as f:
-                    f.write(res.content)
-                self.executa(caminho + 'originais/' + nome_arquivo, nome_arquivo, caminho_id)
-                arquivo_destaque = caminho_id + 'destaque_' + nome_arquivo
-                os.unlink(caminho + 'originais/' + nome_arquivo)
-                if os.path.exists(arquivo_destaque):
-                    fim = time.time()
-                    print(fim-inicio)
-                    retorno.append({'id': image['id'], 'extensao':extensao, 'gerado_image':1,'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
+                if not 'html' in content_type:
+                    print(content_type)
+                    extensao = self.get_extensao_original(content_type)
+                    nome_arquivo = '{}_{}.{}'.format(imovel['id'],image['id'], extensao)
+                    caminho = self.pasta_cwd + str(imovel['id_empresa']) + '/'
+                    caminho_id = self.pasta_cwd + str(imovel['id_empresa']) + '/' + str(imovel['_id']) + '/'
+                    with open(caminho + 'originais/' + nome_arquivo, 'wb') as f:
+                        f.write(res.content)
+                    self.executa(caminho + 'originais/' + nome_arquivo, nome_arquivo, caminho_id)
+                    arquivo_destaque = caminho_id + 'destaque_' + nome_arquivo
+                    os.unlink(caminho + 'originais/' + nome_arquivo)
+                    if os.path.exists(arquivo_destaque):
+                        fim = time.time()
+                        print(fim-inicio)
+                        retorno.append({'id': image['id'], 'extensao':extensao, 'gerado_image':1,'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
+                    else:
+                        fim = time.time()
+                        print(fim-inicio)
+                        retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
                 else:
                     fim = time.time()
                     print(fim-inicio)
