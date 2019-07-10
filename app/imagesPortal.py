@@ -54,7 +54,15 @@ class imagesPortal(object):
         for image in imovel['images']:
             self.verificaPastaImovel(imovel['id_empresa'], imovel['id'])
             a = self.setArquivo(image, imovel)
-            res = requests.get(a, stream=True, allow_redirects=True)
+            try:
+                res = requests.get(a, stream=True)
+            except requests.exceptions.HTTPError as e:
+                print(fim-inicio)
+                retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
+                # Whoops it wasn't a 200
+                return retorno
+                print("Error: " + str(e))
+
             if res.status_code == 200:
                 if 'content-type' in res.headers:
                     content_type = res.headers['content-type']
