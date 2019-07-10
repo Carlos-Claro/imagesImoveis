@@ -56,7 +56,7 @@ class imagesPortal(object):
             self.verificaPastaImovel(imovel['id_empresa'], imovel['id'])
             a = self.setArquivo(image, imovel)
             try:
-                res = requests.get(a, stream=True, headers=self.headers)
+                res = requests.get(a, stream=True, headers=self.headers, timeout=10)
             except requests.exceptions.HTTPError as e:
                 print(fim-inicio)
                 retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
@@ -69,27 +69,31 @@ class imagesPortal(object):
                 # Whoops it wasn't a 200
                 print("Error: " + str(e))
                 return retorno
-
-            if res.status_code == 200:
-                if 'content-type' in res.headers:
-                    content_type = res.headers['content-type']
-                else:
-                    content_type = 'html'
-                if not 'html' in content_type:
-                    print(content_type)
-                    extensao = self.get_extensao_original(content_type)
-                    nome_arquivo = '{}_{}.{}'.format(imovel['id'],image['id'], extensao)
-                    caminho = self.pasta_cwd + str(imovel['id_empresa']) + '/'
-                    caminho_id = self.pasta_cwd + str(imovel['id_empresa']) + '/' + str(imovel['_id']) + '/'
-                    with open(caminho + 'originais/' + nome_arquivo, 'wb') as f:
-                        f.write(res.content)
-                    self.executa(caminho + 'originais/' + nome_arquivo, nome_arquivo, caminho_id)
-                    arquivo_destaque = caminho_id + 'destaque_' + nome_arquivo
-                    os.unlink(caminho + 'originais/' + nome_arquivo)
-                    if os.path.exists(arquivo_destaque):
-                        fim = time.time()
-                        print(fim-inicio)
-                        retorno.append({'id': image['id'], 'extensao':extensao, 'gerado_image':1,'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
+            else:
+                if res.status_code == 200:
+                    if 'content-type' in res.headers:
+                        content_type = res.headers['content-type']
+                    else:
+                        content_type = 'html'
+                    if not 'html' in content_type:
+                        print(content_type)
+                        extensao = self.get_extensao_original(content_type)
+                        nome_arquivo = '{}_{}.{}'.format(imovel['id'],image['id'], extensao)
+                        caminho = self.pasta_cwd + str(imovel['id_empresa']) + '/'
+                        caminho_id = self.pasta_cwd + str(imovel['id_empresa']) + '/' + str(imovel['_id']) + '/'
+                        with open(caminho + 'originais/' + nome_arquivo, 'wb') as f:
+                            f.write(res.content)
+                        self.executa(caminho + 'originais/' + nome_arquivo, nome_arquivo, caminho_id)
+                        arquivo_destaque = caminho_id + 'destaque_' + nome_arquivo
+                        os.unlink(caminho + 'originais/' + nome_arquivo)
+                        if os.path.exists(arquivo_destaque):
+                            fim = time.time()
+                            print(fim-inicio)
+                            retorno.append({'id': image['id'], 'extensao':extensao, 'gerado_image':1,'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
+                        else:
+                            fim = time.time()
+                            print(fim-inicio)
+                            retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
                     else:
                         fim = time.time()
                         print(fim-inicio)
@@ -98,10 +102,6 @@ class imagesPortal(object):
                     fim = time.time()
                     print(fim-inicio)
                     retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
-            else:
-                fim = time.time()
-                print(fim-inicio)
-                retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
         return retorno    
         
     def geraImages(self,image,nome,tamanho, caminho):
