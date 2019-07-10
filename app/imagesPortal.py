@@ -11,6 +11,7 @@ class imagesPortal(object):
 
     def __init__(self):
         self.pasta_cwd = '/var/www/html/images/portais/'
+        self.headers = {'User-Agent': 'POWInternet - gerador de images 1.0'}
 
     def executa(self,image,nome, caminho):
         for tamanho in self.tamanhos():
@@ -55,13 +56,19 @@ class imagesPortal(object):
             self.verificaPastaImovel(imovel['id_empresa'], imovel['id'])
             a = self.setArquivo(image, imovel)
             try:
-                res = requests.get(a, stream=True)
+                res = requests.get(a, stream=True, headers=self.headers)
             except requests.exceptions.HTTPError as e:
                 print(fim-inicio)
                 retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
                 # Whoops it wasn't a 200
-                return retorno
                 print("Error: " + str(e))
+                return retorno
+            except requests.exceptions.Timeout as e:
+                print(fim-inicio)
+                retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
+                # Whoops it wasn't a 200
+                print("Error: " + str(e))
+                return retorno
 
             if res.status_code == 200:
                 if 'content-type' in res.headers:
