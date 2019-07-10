@@ -58,12 +58,14 @@ class imagesPortal(object):
             try:
                 res = requests.get(a, stream=True, headers=self.headers, timeout=10)
             except requests.exceptions.HTTPError as e:
+                fim = time.time()
                 print(fim-inicio)
                 retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
                 # Whoops it wasn't a 200
                 print("Error: " + str(e))
                 return retorno
             except requests.exceptions.Timeout as e:
+                fim = time.time()
                 print(fim-inicio)
                 retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
                 # Whoops it wasn't a 200
