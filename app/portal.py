@@ -32,7 +32,7 @@ class Imoveis(object):
                 print('rodando')
                 print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
                 stat = os.stat(self.URL_rodando + 'rodando.txt')
-                if stat.st_mtime + 360 < time.time():
+                if stat.st_mtime + 720 < time.time():
                     self.deleta_rodando()
                     print('maior, tente novamente')
                     print(stat.st_mtime)
