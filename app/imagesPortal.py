@@ -54,7 +54,7 @@ class imagesPortal(object):
         for image in imovel['images']:
             self.verificaPastaImovel(imovel['id_empresa'], imovel['id'])
             a = self.setArquivo(image, imovel)
-            res = requests.get(a, stream=True)
+            res = requests.get(a, stream=True, allow_redirects=False)
             if res.status_code == 200:
                 if 'content-type' in res.headers:
                     content_type = res.headers['content-type']
