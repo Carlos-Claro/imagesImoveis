@@ -11,7 +11,7 @@ class imagesPortal(object):
 
     def __init__(self):
         self.pasta_cwd = '/var/www/html/images/portais/'
-        self.headers = {'User-Agent': 'POWInternet - gerador de images 1.0'}
+        self.headers = {'User-Agent': 'Portaisimobiliarios.com.br - gerador de images 1.0'}
 
     def executa(self,image,nome, caminho):
         for tamanho in self.tamanhos():
