@@ -125,7 +125,10 @@ class imagesPortal(object):
                     cover = resizeimage.resize_width(imagem,imagem.size[0])
                 else:
                     cover = resizeimage.resize_width(imagem,tamanho['width'])
-                cover.convert('RGB').save(caminho + tamanho['prefixo'] + nome, 'jpeg')
+                try:
+                    cover.convert('RGB').save(caminho + tamanho['prefixo'] + nome, 'jpeg')
+                except OSError as e:
+                    print(e)
 
     def tamanhos(self):
         tamanho = [
