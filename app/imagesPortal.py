@@ -61,6 +61,8 @@ class imagesPortal(object):
             except requests.exceptions.HTTPError as e:
                 fim = time.time()
                 print(fim-inicio)
+                print('httperror')
+                print(a)
                 retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
                 # Whoops it wasn't a 200
                 print("Error: " + str(e))
@@ -68,6 +70,8 @@ class imagesPortal(object):
             except requests.exceptions.Timeout as e:
                 fim = time.time()
                 print(fim-inicio)
+                print('timeout')
+                print(a)
                 retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
                 # Whoops it wasn't a 200
                 print("Error: " + str(e))
@@ -75,6 +79,8 @@ class imagesPortal(object):
             except requests.exceptions.SSLError as e:
                 fim = time.time()
                 print(fim-inicio)
+                print('sslerror')
+                print(a)
                 retorno.append({'id': image['id'], 'gerado_image':2, 'data':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')})
                 # Whoops it wasn't a 200
                 print("Error: " + str(e))
