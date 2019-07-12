@@ -12,10 +12,10 @@ class Imoveis(object):
     def __init__(self):
         if 'localhost' in sys.argv:
             self.localhost = True
-            self.URI = 'http://localhost:5000/'
+            self.URI = 'http://apitestes.powempresas.com/'
         else:
             self.localhost = False
-            self.URI = 'http://201.16.246.176:5000/'
+            self.URI = 'http://imoveis.powempresas.com/'
         self.inicio = time.time()
         self.URL_GET = self.URI + 'imoveis_images_gerar/100'
         self.URL_PUT = self.URI + 'imovel_images_imovel/'
