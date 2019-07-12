@@ -1,5 +1,6 @@
 import os
 from PIL import Image
+Image.LOAD_TRUNCATED_IMAGES = True
 from resizeimage import resizeimage
 import requests
 import os.path
@@ -116,7 +117,6 @@ class imagesPortal(object):
     def geraImages(self,image,nome,tamanho, caminho):
         pa = caminho +  tamanho['prefixo'] + nome
         if os.path.exists(pa) == False:
-            Image.LOAD_TRUNCATED_IMAGES = True
             with Image.open(image) as imagem:
                 print(tamanho['width'])
                 print(imagem.width)
