@@ -122,7 +122,7 @@ class imagesPortal(object):
                 print(imagem.width)
                 if tamanho['width'] == 'auto' :
                     cover = resizeimage.resize_width(imagem,imagem.size[0])
-                elif tamanho['width'] > imagem.width :
+                elif tamanho['width'] >= imagem.width :
                     cover = resizeimage.resize_width(imagem,imagem.size[0])
                 else:
                     cover = resizeimage.resize_width(imagem,tamanho['width'])
