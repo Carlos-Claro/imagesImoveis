@@ -116,6 +116,7 @@ class imagesPortal(object):
     def geraImages(self,image,nome,tamanho, caminho):
         pa = caminho +  tamanho['prefixo'] + nome
         if os.path.exists(pa) == False:
+            Image.LOAD_TRUNCATED_IMAGES = True
             with Image.open(image) as imagem:
                 print(tamanho['width'])
                 print(imagem.width)
@@ -125,10 +126,7 @@ class imagesPortal(object):
                     cover = resizeimage.resize_width(imagem,imagem.size[0])
                 else:
                     cover = resizeimage.resize_width(imagem,tamanho['width'])
-                try:
-                    cover.convert('RGB').save(caminho + tamanho['prefixo'] + nome, 'jpeg')
-                except OSError as e:
-                    pass
+                cover.convert('RGB').save(caminho + tamanho['prefixo'] + nome, 'jpeg')
 
     def tamanhos(self):
         tamanho = [
