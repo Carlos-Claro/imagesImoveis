@@ -128,7 +128,7 @@ class imagesPortal(object):
                 try:
                     cover.convert('RGB').save(caminho + tamanho['prefixo'] + nome, 'jpeg')
                 except OSError as e:
-                    print(e)
+                    pass
 
     def tamanhos(self):
         tamanho = [
