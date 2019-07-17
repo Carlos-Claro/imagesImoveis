@@ -126,13 +126,16 @@ class imagesPortal(object):
             with Image.open(image) as imagem:
                 print(tamanho['width'])
                 print(imagem.width)
-                if tamanho['width'] == 'auto' :
-                    cover = resizeimage.resize_width(imagem,imagem.size[0])
-                elif tamanho['width'] >= imagem.width :
-                    cover = resizeimage.resize_width(imagem,imagem.size[0])
-                else:
-                    cover = resizeimage.resize_width(imagem,tamanho['width'])
-                cover.convert('RGB').save(caminho + tamanho['prefixo'] + nome, 'jpeg')
+                try:
+                    if tamanho['width'] == 'auto' :
+                        cover = resizeimage.resize_width(imagem,imagem.size[0])
+                    elif tamanho['width'] >= imagem.width :
+                        cover = resizeimage.resize_width(imagem,imagem.size[0])
+                    else:
+                        cover = resizeimage.resize_width(imagem,tamanho['width'])
+                    cover.convert('RGB').save(caminho + tamanho['prefixo'] + nome, 'jpeg')
+                except IOError:
+                    pass
 
     def tamanhos(self):
         tamanho = [
