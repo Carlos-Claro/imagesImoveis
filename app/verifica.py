@@ -19,6 +19,7 @@ class Verifica(object):
         else:
             self.localhost = False
             self.URI = 'http://201.16.246.176:5000/'
+        self.URI_VERIFICA = self.URI + 'imoveis_in/'
         self.inicio = time.time()
         self.images = imagesPortal()
         self.cwd = '/var/www/html/images/portais/'
@@ -60,20 +61,38 @@ class Verifica(object):
     def listaArquivosTemp(self, pasta):
         if os.path.isdir(pasta):
             lista_arquivos = os.listdir(pasta)
-            if len(lista_arquivos):
-                lista_retorno = []
-                for arquivo in lista_arquivos:
-                    if os.path.isfile(pasta + arquivo):
-                        lista_retorno.append(arquivo)
-                return lista_retorno
-            else:
-                return False
+            return lista_arquivos
         else:
             return False
+        
+    def listaPastas(self, pasta):
+        if os.path.isdir(pasta):
+            lista_arquivos = os.listdir(pasta)
+            if len(lista_arquivos):
+                return lista_arquivos
+            return []
     
-    def lista_pastas(self):
+    def deleta_pasta(self):
+        if len(self.pastas) > 0 :
+            lista = {}
+            for pasta in self.pastas:
+                pasta_completa = self.cwd + pasta + '/'
+                lista[pasta] = self.listaPastas(pasta_completa)
+            self.verifica_lista(lista)
         return True
     
+    def verifica_lista(self, lista):
+        for empresa,itens in lista.items():
+            print(empresa)
+            if len(itens):
+                print(itens)
+                data = {'id':json.dumps(itens)}
+                res = requests.get(self.URI_VERIFICA + empresa, params=data)
+                content = res.content
+                r = content.json()
+                if content['deleta']:
+                    print(str(content['id']))
+        pass
     
     def deleta_rodando(self):
         if not self.localhost:
@@ -124,4 +143,4 @@ class Verifica(object):
         return True
     
 if __name__ == '__main__':
-    Verifica().main()
+    Verifica().deleta_pasta()
