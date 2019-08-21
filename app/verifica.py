@@ -88,6 +88,7 @@ class Verifica(object):
                 print(itens)
                 data = {'id':json.dumps(itens)}
                 res = requests.get(self.URI_VERIFICA + empresa, params=data)
+                print(res)
                 r = res.json()
                 print(r)
                 if r['deleta']:
