@@ -18,12 +18,12 @@ class Verifica(object):
             self.URI = 'http://localhost:5000/'
         else:
             self.localhost = False
-            self.URI = 'http://201.16.246.176:5000/'
+            self.URI = 'http://imoveis.powempresas.com/'
         self.URI_VERIFICA = self.URI + 'imoveis_in/'
         self.inicio = time.time()
         self.images = imagesPortal()
         self.cwd = '/var/www/html/images/portais/'
-        self.arquivoVerificador = self.cwd + 'verificador.json'
+        self.arquivoVerificador = self.cwd + 'verifica_deleta.json'
         self.verificaArquivo()
         
         
@@ -78,21 +78,30 @@ class Verifica(object):
             for pasta in self.pastas:
                 pasta_completa = self.cwd + pasta + '/'
                 lista[pasta] = self.listaPastas(pasta_completa)
-            self.verifica_lista(lista)
+            self.verifica_lista(lista, pasta_completa)
         return True
     
-    def verifica_lista(self, lista):
+    def verifica_lista(self, lista, pasta):
         for empresa,itens in lista.items():
             print(empresa)
             if len(itens):
                 print(itens)
                 data = {'id':json.dumps(itens)}
                 res = requests.get(self.URI_VERIFICA + empresa, params=data)
-                content = res.content
-                r = content.json()
-                if content['deleta']:
-                    print(str(content['id']))
-        pass
+                r = res.json()
+                print(r)
+                if r['deleta']:
+                    if 'id' in r:
+                        for i in r['id']:
+                            p = self.cwd + empresa + '/' + i
+                            shutil.rmtree(p)
+                            print(p)
+                            print(str(i))
+                    if 'todos' in r:
+                        print(self.cwd + empresa)
+                        shutil.rmtree(self.cwd + empresa)
+                        print('todos')
+        return True
     
     def deleta_rodando(self):
         if not self.localhost:
