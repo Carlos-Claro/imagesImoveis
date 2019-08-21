@@ -88,20 +88,21 @@ class Verifica(object):
                 print(itens)
                 data = {'id':json.dumps(itens)}
                 res = requests.get(self.URI_VERIFICA + empresa, params=data)
-                print(res)
-                r = res.json()
-                print(r)
-                if r['deleta']:
-                    if 'id' in r:
-                        for i in r['id']:
-                            p = self.cwd + empresa + '/' + i
-                            shutil.rmtree(p)
-                            print(p)
-                            print(str(i))
-                    if 'todos' in r:
-                        print(self.cwd + empresa)
-                        shutil.rmtree(self.cwd + empresa)
-                        print('todos')
+                if res.status_code == 200:
+                    print(res)
+                    r = res.json()
+                    print(r)
+                    if r['deleta']:
+                        if 'id' in r:
+                            for i in r['id']:
+                                p = self.cwd + empresa + '/' + i
+                                shutil.rmtree(p)
+                                print(p)
+                                print(str(i))
+                        if 'todos' in r:
+                            print(self.cwd + empresa)
+                            shutil.rmtree(self.cwd + empresa)
+                            print('todos')
         return True
     
     def deleta_rodando(self):
