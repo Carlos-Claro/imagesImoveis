@@ -19,7 +19,9 @@ class Verifica(object):
         else:
             self.localhost = False
             self.URI = 'http://imoveis.powempresas.com/'
-        self.URI_VERIFICA = self.URI + 'imoveis_in/'
+        self.URI_VERIFICA = self.URI + 'imoveis/'
+        self.URL_PUT = self.URI + 'imovel_images_imovel/'
+        self.URL_PUT_IMOVEL = self.URI + 'imovel/'
         self.inicio = time.time()
         self.images = imagesPortal()
         self.cwd = '/var/www/html/images/portais/'
@@ -79,30 +81,26 @@ class Verifica(object):
                 pasta_completa = self.cwd + pasta + '/'
                 lista[pasta] = self.listaPastas(pasta_completa)
             self.verifica_lista(lista, pasta_completa)
+        os.unlink(self.arquivoVerificador)
         return True
     
     def verifica_lista(self, lista, pasta):
         for empresa,itens in lista.items():
-            print(empresa)
+            print('empresa',empresa)
             if len(itens):
-                print(itens)
-                data = {'id':json.dumps(itens)}
-                res = requests.get(self.URI_VERIFICA + empresa, params=data)
-                if res.status_code == 200:
-                    print(res)
-                    r = res.json()
-                    print(r)
-                    if r['deleta']:
-                        if 'id' in r:
-                            for i in r['id']:
-                                p = self.cwd + empresa + '/' + i
-                                shutil.rmtree(p)
-                                print(p)
-                                print(str(i))
-                        if 'todos' in r:
-                            print(self.cwd + empresa)
-                            shutil.rmtree(self.cwd + empresa)
-                            print('todos')
+                qtde_mantem = 0
+                qtde_deleta = 0
+                for item in itens:
+                    if item.isnumeric():
+                        res_v = requests.get(self.URI_VERIFICA + item)
+                        if res_v.status_code == 403:
+                            p = self.cwd + empresa + '/' + item
+                            shutil.rmtree(p)
+                            qtde_deleta = qtde_deleta + 1
+                        else:
+                            qtde_mantem = qtde_mantem + 1
+                print('mantem', qtde_mantem)
+                print('deleta', qtde_deleta)
         return True
     
     def deleta_rodando(self):
