@@ -10,9 +10,10 @@ import sys
 class Imoveis(object):
     
     def __init__(self):
-        if 'localhost' in sys.argv:
+        argument = sys.argv
+        if 'localhost' in argument:
             self.localhost = True
-            self.URI = 'http://apitestes.powempresas.com/'
+            self.URI = 'http://localhost:5000/'
         else:
             self.localhost = False
             self.URI = 'http://imoveis.powempresas.com/'
@@ -23,6 +24,11 @@ class Imoveis(object):
         self.URL_PUT_MONGO = self.URI + 'imoveismongo/'
         self.URL_rodando = '/var/www/html/images/'
         self.images = imagesPortal()
+        self.id_empresa = False
+        if '-e' in sys.argv:
+            posicao_e = argument.index('-e')
+            self.id_empresa = argument[posicao_e+1]
+        self.main()
         
     def rodando(self):
         if ( self.localhost ):
@@ -54,7 +60,11 @@ class Imoveis(object):
     
     def main(self):
         if self.rodando():
-            imoveis = requests.get(self.URL_GET)
+            if self.id_empresa:
+                data = {'id_empresa':self.id_empresa}
+                imoveis = requests.get(self.URL_GET, params=data)
+            else:
+                imoveis = requests.get(self.URL_GET)
             i = imoveis.json()
             for v in i['itens']:
                 print('imovel - ' + str(v['_id']) + ' empresa - ' + v['id_empresa'])
@@ -92,4 +102,4 @@ class Imoveis(object):
         
     
 if __name__ == '__main__':
-    Imoveis().main()
+    Imoveis()

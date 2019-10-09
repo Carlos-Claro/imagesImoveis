@@ -23,6 +23,8 @@ class imagesPortal(object):
             return 'jpg'
         elif 'png' in mime:
             return 'png'
+        else:
+            return 'jpg'
     
     def verificaPasta(self,id_empresa):
         if os.path.isdir(self.pasta_cwd + id_empresa):
@@ -56,6 +58,7 @@ class imagesPortal(object):
         for image in imovel['images']:
             self.verificaPastaImovel(imovel['id_empresa'], imovel['id'])
             a = self.setArquivo(image, imovel)
+            print(a)
             try:
                 res = requests.get(a, stream=True, headers=self.headers, timeout=10)
             except requests.exceptions.HTTPError as e:
@@ -91,6 +94,9 @@ class imagesPortal(object):
                         content_type = res.headers['content-type']
                     else:
                         content_type = 'html'
+                    print(res.status_code)
+                    print(res.headers)
+                    print(res.headers['content-type'])
                     if not 'html' in content_type:
                         print(content_type)
                         extensao = self.get_extensao_original(content_type)
@@ -99,6 +105,7 @@ class imagesPortal(object):
                         caminho_id = self.pasta_cwd + str(imovel['id_empresa']) + '/' + str(imovel['_id']) + '/'
                         with open(caminho + 'originais/' + nome_arquivo, 'wb') as f:
                             f.write(res.content)
+                        print(caminho + 'originais/' + nome_arquivo)
                         self.executa(caminho + 'originais/' + nome_arquivo, nome_arquivo, caminho_id)
                         arquivo_destaque = caminho_id + 'destaque_' + nome_arquivo
                         os.unlink(caminho + 'originais/' + nome_arquivo)
@@ -122,6 +129,7 @@ class imagesPortal(object):
         
     def geraImages(self,image,nome,tamanho, caminho):
         pa = caminho +  tamanho['prefixo'] + nome
+        print(pa)
         if os.path.exists(pa) == False:
             with Image.open(image) as imagem:
                 print(tamanho['width'])
