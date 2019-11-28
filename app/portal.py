@@ -66,6 +66,7 @@ class Imoveis(object):
             else:
                 imoveis = requests.get(self.URL_GET)
             i = imoveis.json()
+            print(i)
             for v in i['itens']:
                 print('imovel - ' + str(v['_id']) + ' empresa - ' + v['id_empresa'])
                 if 'images' in v:

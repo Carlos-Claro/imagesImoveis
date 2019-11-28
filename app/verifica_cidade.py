@@ -82,7 +82,7 @@ class Verifica_cidade(object):
                 pasta_completa = self.cwd + pasta + '/'
                 lista[pasta] = self.listaPastas(pasta_completa)
             self.verifica_lista(lista, pasta_completa)
-        #os.unlink(self.arquivoVerificador)
+        os.unlink(self.arquivoVerificador)
         return True
     
     def verifica_lista(self, lista, pasta):
