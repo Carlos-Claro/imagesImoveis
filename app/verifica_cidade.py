@@ -8,7 +8,7 @@ import os
 import sys
 import json
 from shutil import copyfile
-
+from requests.auth import HTTPBasicAuth
 
 class Verifica_cidade(object):
     
@@ -19,6 +19,11 @@ class Verifica_cidade(object):
         else:
             self.localhost = False
             self.URI = 'http://imoveis.powempresas.com/'
+        with open('../../json/keys.json') as json_file:
+            data = json.load(json_file)
+        self.user = data['basic']['user']
+        self.passwd = data['basic']['passwd']
+        self.auth = HTTPBasicAuth(self.user, self.passwd)
         self.URI_VERIFICA = self.URI + 'imoveis_cidade/'
         self.URL_PUT = self.URI + 'update_imovel_verifica/'
         self.URL_DELETA_MONGO = self.URI + 'imoveismongo/'
@@ -93,14 +98,14 @@ class Verifica_cidade(object):
                 qtde_deleta = 0
                 for item in itens:
                     if item.isnumeric():
-                        res_v = requests.get(self.URI_VERIFICA + item)
+                        res_v = requests.get(self.URI_VERIFICA + item, auth=self.auth)
                         if res_v.status_code == 403:
                             p = self.cwd + empresa + '/' + item
                             data_update = {'gerado_image':'0'}
-                            update = requests.put(self.URL_PUT + str(item),params=data_update)
+                            update = requests.put(self.URL_PUT + str(item),params=data_update, auth=self.auth)
                             data_imovel = {'integra_mongo_db':"0000-00-00"}
-                            update_imovel = requests.put(self.URL_PUT_IMOVEL + str(item),params=data_imovel)
-                            delete_imovel_mongo = requests.delete(self.URL_DELETA_MONGO + str(item))
+                            update_imovel = requests.put(self.URL_PUT_IMOVEL + str(item),params=data_imovel, auth=self.auth)
+                            delete_imovel_mongo = requests.delete(self.URL_DELETA_MONGO + str(item), auth=self.auth)
                             shutil.rmtree(p)
                             qtde_deleta = qtde_deleta + 1
                         else:

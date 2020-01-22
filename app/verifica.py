@@ -8,7 +8,7 @@ import os
 import sys
 import json
 from shutil import copyfile
-
+from requests.auth import HTTPBasicAuth
 
 class Verifica(object):
     
@@ -19,6 +19,11 @@ class Verifica(object):
         else:
             self.localhost = False
             self.URI = 'http://imoveis.powempresas.com/'
+        with open('../../json/keys.json') as json_file:
+            data = json.load(json_file)
+        self.user = data['basic']['user']
+        self.passwd = data['basic']['passwd']
+        self.auth = HTTPBasicAuth(self.user, self.passwd)
         self.URI_VERIFICA = self.URI + 'imoveis/'
         self.URL_PUT = self.URI + 'imovel_images_imovel/'
         self.URL_PUT_IMOVEL = self.URI + 'imovel/'
@@ -92,7 +97,7 @@ class Verifica(object):
                 qtde_deleta = 0
                 for item in itens:
                     if item.isnumeric():
-                        res_v = requests.get(self.URI_VERIFICA + item)
+                        res_v = requests.get(self.URI_VERIFICA + item, auth=self.auth)
                         if res_v.status_code == 403:
                             p = self.cwd + empresa + '/' + item
                             shutil.rmtree(p)

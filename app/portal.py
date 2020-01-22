@@ -6,6 +6,7 @@ import datetime
 import time
 import os
 import sys
+from requests.auth import HTTPBasicAuth
 
 class Imoveis(object):
     
@@ -14,9 +15,16 @@ class Imoveis(object):
         if 'localhost' in argument:
             self.localhost = True
             self.URI = 'http://localhost:5000/'
+            with open('../../../json/keys.json') as json_file:
+                data = json.load(json_file)
         else:
             self.localhost = False
             self.URI = 'http://imoveis.powempresas.com/'
+            with open('../../json/keys.json') as json_file:
+                data = json.load(json_file)
+        self.user = data['basic']['user']
+        self.passwd = data['basic']['passwd']
+        self.auth = HTTPBasicAuth(self.user,self.passwd)
         self.inicio = time.time()
         self.URL_GET = self.URI + 'imoveis_images_gerar/100'
         self.URL_PUT = self.URI + 'imovel_images_imovel/'
@@ -62,9 +70,9 @@ class Imoveis(object):
         if self.rodando():
             if self.id_empresa:
                 data = {'id_empresa':self.id_empresa}
-                imoveis = requests.get(self.URL_GET, params=data)
+                imoveis = requests.get(self.URL_GET, params=data, auth=self.auth)
             else:
-                imoveis = requests.get(self.URL_GET)
+                imoveis = requests.get(self.URL_GET, auth=self.auth)
             i = imoveis.json()
             print(i)
             for v in i['itens']:
@@ -74,12 +82,12 @@ class Imoveis(object):
                     print(res)
                     if res:
                         for r in res:
-                            update = requests.put(self.URL_PUT,params=r)
+                            update = requests.put(self.URL_PUT,params=r, auth=self.auth)
                             print(update.status_code)
                         data_imovel = {'integra_mongo_db':"0000-00-00"}
-                        update_imovel = requests.put(self.URL_PUT_IMOVEL + str(v['_id']),params=data_imovel)
+                        update_imovel = requests.put(self.URL_PUT_IMOVEL + str(v['_id']),params=data_imovel, auth=self.auth)
                         data_mongo = {'tem_foto':1,'data_update':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}
-                        update_mongo = requests.put(self.URL_PUT_MONGO + str(v['_id']),params=data_mongo)
+                        update_mongo = requests.put(self.URL_PUT_MONGO + str(v['_id']),params=data_mongo, auth=self.auth)
                         print('res sucesso')
                         print(r)
                         print(self.URL_PUT + str(v['id']))
@@ -93,7 +101,7 @@ class Imoveis(object):
                         print(update_mongo.content)
                     else:
                         data_mongo = {'tem_foto':1,'data_update':datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}
-                        update_mongo = requests.put(self.URL_PUT_MONGO + str(v['_id']),params=data_mongo)
+                        update_mongo = requests.put(self.URL_PUT_MONGO + str(v['_id']),params=data_mongo, auth=self.auth)
                         print('res fail')
                         print(v['_id'])
             self.fim = time.time()
