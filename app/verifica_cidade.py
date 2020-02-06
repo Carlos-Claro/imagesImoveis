@@ -19,7 +19,7 @@ class Verifica_cidade(object):
         else:
             self.localhost = False
             self.URI = 'http://imoveis.powempresas.com/'
-        with open('../../json/keys.json') as json_file:
+        with open('var/www/json/keys.json') as json_file:
             data = json.load(json_file)
         self.user = data['basic']['user']
         self.passwd = data['basic']['passwd']
