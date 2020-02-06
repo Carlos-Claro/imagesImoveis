@@ -6,6 +6,7 @@ import datetime
 import time
 import os
 import sys
+import json
 from requests.auth import HTTPBasicAuth
 
 class Imoveis(object):

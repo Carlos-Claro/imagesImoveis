@@ -17,7 +17,7 @@ class Verifica(object):
         if 'localhost' in sys.argv:
             self.localhost = True
             self.URI = 'http://localhost:5000/'
-            self.cwd = '/home/www/images/pow/'
+            self.cwd = '/media/programacao/HD2/backup/pow/'
         else:
             self.localhost = False
             self.URI = 'http://imoveis.powempresas.com/'
