@@ -21,7 +21,7 @@ class Imoveis(object):
         else:
             self.localhost = False
             self.URI = 'http://imoveis.powempresas.com/'
-            with open('/var/www/json/keys.json') as json_file:
+            with open('/home/carlos/json/keys.json') as json_file:
                 data = json.load(json_file)
         self.user = data['basic']['user']
         self.passwd = data['basic']['passwd']
@@ -31,7 +31,7 @@ class Imoveis(object):
         self.URL_PUT = self.URI + 'imovel_images_imovel/'
         self.URL_PUT_IMOVEL = self.URI + 'imovel/'
         self.URL_PUT_MONGO = self.URI + 'imoveismongo/'
-        self.URL_rodando = '/var/www/html/images/'
+        self.URL_rodando = '/home/images/'
         self.images = imagesPortal()
         self.id_empresa = False
         if '-e' in sys.argv:

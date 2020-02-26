@@ -19,7 +19,7 @@ class Verifica_cidade(object):
         else:
             self.localhost = False
             self.URI = 'http://imoveis.powempresas.com/'
-        with open('var/www/json/keys.json') as json_file:
+        with open('/home/carlos//json/keys.json') as json_file:
             data = json.load(json_file)
         self.user = data['basic']['user']
         self.passwd = data['basic']['passwd']
@@ -30,7 +30,7 @@ class Verifica_cidade(object):
         self.URL_PUT_IMOVEL = self.URI + 'imovel/'
         self.inicio = time.time()
         self.images = imagesPortal()
-        self.cwd = '/var/www/html/images/portais/'
+        self.cwd = '/home/images/portais/'
         self.arquivoVerificador = self.cwd + 'verifica_cidades_.json'
         self.verificaArquivo()
         
