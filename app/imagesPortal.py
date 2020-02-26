@@ -11,7 +11,7 @@ import datetime
 class imagesPortal(object):
 
     def __init__(self):
-        self.pasta_cwd = '/var/www/html/images/portais/'
+        self.pasta_cwd = '/home/images/portais/'
         self.headers = {'User-Agent': 'Portaisimobiliarios.com.br - gerador de images 1.0'}
 
     def executa(self,image,nome, caminho):
