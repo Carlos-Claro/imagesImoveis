@@ -16,9 +16,11 @@ class Verifica(object):
         if 'localhost' in sys.argv:
             self.localhost = True
             self.URI = 'http://localhost:5000/'
+            self.cwd = '/var/www/html/images/portais/'
         else:
             self.localhost = False
             self.URI = 'http://imoveis.powempresas.com/'
+            self.cwd = '/home/images/portais/'
         with open('/var/www/json/keys.json') as json_file:
             data = json.load(json_file)
         self.user = data['basic']['user']
@@ -29,7 +31,6 @@ class Verifica(object):
         self.URL_PUT_IMOVEL = self.URI + 'imovel/'
         self.inicio = time.time()
         self.images = imagesPortal()
-        self.cwd = '/var/www/html/images/portais/'
         self.arquivoVerificador = self.cwd + 'verifica_deleta.json'
         self.verificaArquivo()
         
