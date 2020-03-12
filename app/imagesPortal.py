@@ -31,17 +31,17 @@ class imagesPortal(object):
             if os.path.isdir(self.pasta_cwd + id_empresa + '/originais'):
                 return True
             else:
-                os.mkdir(self.pasta_cwd + id_empresa + '/originais')
+                os.mkdir(self.pasta_cwd + id_empresa + '/originais', 0o777)
                 return self.verificaPasta(id_empresa)
         else:
-            os.mkdir(self.pasta_cwd + id_empresa)
+            os.mkdir(self.pasta_cwd + id_empresa, 0o777)
             return self.verificaPasta(id_empresa)
     
     def verificaPastaImovel(self,id_empresa,id_imovel):
         if os.path.isdir(self.pasta_cwd + id_empresa + '/' + id_imovel):
             return True
         else:
-            os.mkdir(self.pasta_cwd + id_empresa + '/' + id_imovel)
+            os.mkdir(self.pasta_cwd + id_empresa + '/' + id_imovel, 0o777)
             return self.verificaPastaImovel(id_empresa, id_imovel)
     
     def setArquivo(self,image,imovel):
