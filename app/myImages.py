@@ -58,7 +58,7 @@ class myImages(object):
                     cover = resizeimage.resize_width(imagem,imagem.size[0])
                 else:
                     cover = resizeimage.resize_width(imagem,tamanho['width'])
-                cover.save(self.pasta + 'imo/{}/{}{}'.format(id_imovel,tamanho['prefixo'],nome), 'jpeg')
+                cover.convert("RGB").save(self.pasta + 'imo/{}/{}{}'.format(id_imovel,tamanho['prefixo'],nome), 'jpeg')
 
     def tamanhos(self):
         tamanho = [
