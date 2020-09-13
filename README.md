@@ -2,6 +2,8 @@
 gera images na pasta IMO do diretorio, com base no admin
 deletar apos uso
 
+arquivo main, copia images de integração de outros locais e copia para a pasta imo.
+
 # renomeiaPasta
 verifica os arquivo da pasta e cria subpasta com id do imovel para reorganizar e otimizar busca
 
