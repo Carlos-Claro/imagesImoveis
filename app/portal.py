@@ -27,7 +27,7 @@ class Imoveis(object):
         self.passwd = data['basic']['passwd']
         self.auth = HTTPBasicAuth(self.user,self.passwd)
         self.inicio = time.time()
-        self.URL_GET = self.URI + 'imoveis_images_gerar/100'
+        self.URL_GET = self.URI + 'imoveis_images_gerar/50'
         self.URL_PUT = self.URI + 'imovel_images_imovel/'
         self.URL_PUT_IMOVEL = self.URI + 'imovel/'
         self.URL_PUT_MONGO = self.URI + 'imoveismongo/'
