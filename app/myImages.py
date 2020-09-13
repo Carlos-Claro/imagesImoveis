@@ -9,10 +9,12 @@ class myImages(object):
 
     def __init__(self, id_empresa):
         self.ID = id_empresa
+        # self.pasta = '/var/www/html/powsites/powsites/{}/'.format(id_empresa)
+        self.pasta = '/home/pow/www/powsites/{}/'.format(id_empresa)
 
-    def executa(self,image,nome):
+    def executa(self,image,nome,id_imovel):
         for tamanho in self.tamanhos():
-            self.geraImages(image,nome,tamanho)
+            self.geraImages(image,nome,tamanho,id_imovel)
 
     def get_extensao_original(self, mime):
         if 'jpeg' in mime:
@@ -25,12 +27,14 @@ class myImages(object):
         if res.status_code == 200 :
             content_type = res.headers['content-type']
             arquivo = '{}_{}.{}'.format(image['id_imovel'],image['id'], self.get_extensao_original(content_type))
-            caminho = '../../originais/'
+            caminho = self.pasta + 'originais/'
             print(caminho + arquivo)
             with open(caminho + arquivo, 'wb') as f:
                 f.write(res.content)
-            self.executa(caminho + arquivo, arquivo)
-            arquivo_imo = '../../imo/F_' + arquivo
+            pasta_ = self.pasta + 'imo/{}'.format(image['id_imovel'])
+            self.verifica_pasta(pasta_)
+            self.executa(caminho + arquivo, arquivo,image['id_imovel'])
+            arquivo_imo = self.pasta + 'imo/{}/F_{}'.format(image['id_imovel'],arquivo)
             if os.path.exists(arquivo_imo):
                 return 'F_' + arquivo
             else:
@@ -39,8 +43,11 @@ class myImages(object):
             
             return False
 
-    def geraImages(self,image,nome,tamanho):
-        pa = '../../imo/' + tamanho['prefixo'] + nome
+    def verifica_pasta(self,pasta):
+        return os.makedirs(pasta,0o777,True)
+
+    def geraImages(self,image,nome,tamanho,id_imovel):
+        pa = self.pasta + 'imo/{}/{}{}'.format(id_imovel,tamanho['prefixo'],nome)
         if os.path.exists(pa) == False:
             with Image.open(image) as imagem:
                 print(tamanho['width'])
@@ -51,7 +58,7 @@ class myImages(object):
                     cover = resizeimage.resize_width(imagem,imagem.size[0])
                 else:
                     cover = resizeimage.resize_width(imagem,tamanho['width'])
-                cover.save('../../imo/' + tamanho['prefixo'] + nome, 'jpeg')
+                cover.save(self.pasta + 'imo/{}/{}{}'.format(id_imovel,tamanho['prefixo'],nome), 'jpeg')
 
     def tamanhos(self):
         tamanho = [
@@ -68,7 +75,7 @@ class myImages(object):
 
 if __name__ == '__main__':
     try:
-        myImages(83544)
+        myImages(7932)
     except KeyboardInterrupt:
         pass
     finally:

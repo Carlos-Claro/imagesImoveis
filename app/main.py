@@ -7,11 +7,11 @@ import datetime
 class Imoveis(object):
     
     def __init__(self):
-        #self.URI = 'http://localhost:5000/'
-        self.URI = 'http://201.16.246.176:5000/'
-        self.URL_GET = self.URI + 'imovel_images_copy'
+        # self.URI = 'http://localhost:5000/'
+        self.URI = 'http://imoveis.powempresas.com/'
+        self.URL_GET = self.URI + 'imovel_images_copy/7932'
         self.URL_PUT = self.URI + 'imovel_images/'
-        self.images = myImages(85344)
+        self.images = myImages(7932)
 
     def main(self):
         images = requests.get(self.URL_GET)
